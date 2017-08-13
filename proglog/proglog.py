@@ -117,7 +117,7 @@ class ProgressBarLogger(ProgressLogger):
         """
         bar, iterable = kw.popitem()
 
-        if bar in self.ignored_bars:
+        if self.bar_is_ignored(bar):
             return iterable
         if hasattr(iterable, '__len__'):
             self(**{bar + '__total': len(iterable)})
@@ -156,10 +156,10 @@ class ProgressBarLogger(ProgressLogger):
         for key, value in items:
             if '__' in key:
                 bar, attr = key.split('__')
-                if bar in self.ignored_bars:
+                if self.bar_is_ignored(bar):
                     continue
                 kw.pop(key)
-                if (bar not in self.bars) and (bar not in self.ignored_bars):
+                if (bar not in self.bars) and self.bar_is_ignored(bar):
                     self.bars[bar] = dict(title=bar, index=-1,
                                           total=None, message=None)
                 old_value = self.bars[bar][attr]
@@ -201,7 +201,7 @@ class TqdmProgressBarLogger(ProgressBarLogger):
     """
 
     def __init__(self, init_state=None, bars=None, leave_bars=False,
-                 ignored_bars=(), notebook='default', print_messages=True):
+                 ignored_bars=None, notebook='default', print_messages=True):
         ProgressBarLogger.__init__(self, init_state=init_state, bars=bars,
                                    ignored_bars=ignored_bars)
         self.leave_bars = leave_bars
@@ -263,9 +263,9 @@ class RqWorkerProgressLogger:
         self.job.meta['progress_data'] = self.state
         self.job.save()
 
-class RqWorkerBarLogger(ProgressBarLogger, RqWorkerProgressLogger):
+class RqWorkerBarLogger(RqWorkerProgressLogger, ProgressBarLogger):
 
     def __init__(self, job, init_state=None, bars=None, ignored_bars=()):
-        RqWorkerBarLogger.__init__(self, job)
-        ProgressBarLogger.__init__(init_state=init_state, bars=bars,
+        RqWorkerProgressLogger.__init__(self, job)
+        ProgressBarLogger.__init__(self, init_state=init_state, bars=bars,
                                    ignored_bars=ignored_bars)

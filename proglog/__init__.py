@@ -3,6 +3,6 @@
 # __all__ = []
 
 from .proglog import (ProgressLogger, ProgressBarLogger, TqdmProgressBarLogger,
-                      SETTINGS)
+                      SETTINGS, RqWorkerProgressLogger, RqWorkerBarLogger)
 
 from .version import __version__
