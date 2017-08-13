@@ -1,2 +1,3 @@
 include *.txt
-recursive-include examples *.txt *.py
+include *.rst
+include ez_setup.py
