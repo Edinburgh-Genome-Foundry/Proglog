@@ -102,7 +102,7 @@ class ProgressBarLogger(ProgressLogger):
         elif self.ignored_bars == 'all_others':
             return (bar not in self.bars)
         else:
-            return bar not in self.ignored_bars
+            return bar in self.ignored_bars
 
     def iter_bar(self, **kw):
         """Iterate through a list while updating a state bar.
@@ -159,7 +159,7 @@ class ProgressBarLogger(ProgressLogger):
                 if self.bar_is_ignored(bar):
                     continue
                 kw.pop(key)
-                if (bar not in self.bars) and self.bar_is_ignored(bar):
+                if bar not in self.bars:
                     self.bars[bar] = dict(title=bar, index=-1,
                                           total=None, message=None)
                 old_value = self.bars[bar][attr]
