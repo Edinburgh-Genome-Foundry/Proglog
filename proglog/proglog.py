@@ -8,6 +8,9 @@ SETTINGS = {
     'notebook': False
 }
 
+def notebook(turn='on'):
+    SETTINGS['notebook'] = True if (turn == 'on') else False
+
 class ProgressLogger:
     """Generic class for progress loggers.
 
@@ -115,6 +118,10 @@ class ProgressBarLogger(ProgressLogger):
         >>>     print (username)
 
         """
+        if 'bar_message' in kw:
+            bar_message = kw.pop('bar_message')
+        else:
+            bar_message = None
         bar, iterable = kw.popitem()
 
         if self.bar_is_ignored(bar):
@@ -124,9 +131,14 @@ class ProgressBarLogger(ProgressLogger):
 
         def new_iterable():
             for i, it in enumerate(iterable):
+                if bar_message is not None:
+                    self(**{bar + '__message': bar_message(it)})
+
                 self(**{bar + '__index': i})
                 yield it
+
             self(**{bar + '__index': i + 1})
+
         return new_iterable()
 
     def bars_callback(self, bar, attr, value, old_value=None):
@@ -247,7 +259,8 @@ class TqdmProgressBarLogger(ProgressBarLogger):
                 self.new_tqdm_bar(bar)
                 self.tqdm_bars[bar].update(value + 1)
         elif attr == 'message':
-            self.tqdm_bars[bar].set_postfix(value)
+            self.tqdm_bars[bar].set_postfix(now=value)
+            self.tqdm_bars[bar].update(0)
     def callback(self, **kw):
         if self.print_messages and ('message' in kw) and kw['message']:
             self.tqdm.write(kw['message'])
