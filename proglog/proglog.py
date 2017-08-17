@@ -235,7 +235,7 @@ class TqdmProgressBarLogger(ProgressBarLogger):
         self.tqdm_bars[bar] = self.tqdm(
            total=infos['total'],
            desc=infos['title'],
-           postfix=infos['message'],
+           postfix=dict(now=infos['message']),
            leave=self.leave_bars
         )
     def close_tqdm_bar(self, bar):
