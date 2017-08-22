@@ -11,6 +11,9 @@ SETTINGS = {
 def notebook(turn='on'):
     SETTINGS['notebook'] = True if (turn == 'on') else False
 
+def troncate_string(s, max_length=25):
+    return s if (len(s) < max_length) else (s[:max_length] + "...")
+
 class ProgressLogger:
     """Generic class for progress loggers.
 
@@ -25,8 +28,20 @@ class ProgressLogger:
     def __init__(self, init_state=None):
 
         self.state = {}
+        self.logs = []
+        self.log_indent = 0
         if init_state is not None:
             self.state.update(init_state)
+
+    def log(self, message):
+        self.logs.append((' ' * self.log_indent) + message)
+
+    def dump_logs(self, filepath=None):
+        if filepath is not None:
+            with open(filepath, 'a') as f:
+                f.write("\n".join(self.logs))
+        else:
+            return "\n".join(self.logs)
 
     def callback(self, **kw):
         """Execute something after the state has been updated by the given
@@ -80,18 +95,23 @@ class ProgressBarLogger(ProgressLogger):
       ``self.bars`` will be ignored.
     """
 
-    def __init__(self, init_state=None, bars=None, ignored_bars=None):
+    bar_indent = 2
+
+    def __init__(self, init_state=None, bars=None, ignored_bars=None,
+                 logged_bars='all'):
         ProgressLogger.__init__(self, init_state)
         if bars is None:
             bars = OrderedDict()
         elif isinstance(bars, (list, tuple)):
             bars = OrderedDict([
-                (b, dict(title=b, index=-1, total=None, message=None))
+                (b, dict(title=b, index=-1, total=None, message=None,
+                         indent=0))
                 for b in bars
             ])
         if isinstance(ignored_bars, (list, tuple)):
             ignored_bars = set(ignored_bars)
         self.ignored_bars = ignored_bars
+        self.logged_bars = logged_bars
         self.state['bars'] = bars
 
     @property
@@ -106,6 +126,14 @@ class ProgressBarLogger(ProgressLogger):
             return (bar not in self.bars)
         else:
             return bar in self.ignored_bars
+
+    def bar_is_logged(self, bar):
+        if (not self.logged_bars):
+            return False
+        elif self.logged_bars == 'all':
+            return True
+        else:
+            return bar in self.logged_bars
 
     def iter_bar(self, **kw):
         """Iterate through a list while updating a state bar.
@@ -165,6 +193,7 @@ class ProgressBarLogger(ProgressLogger):
     def __call__(self, **kw):
 
         items = sorted(kw.items(), key=lambda kv: not kv[0].endswith('total'))
+
         for key, value in items:
             if '__' in key:
                 bar, attr = key.split('__')
@@ -175,6 +204,15 @@ class ProgressBarLogger(ProgressLogger):
                     self.bars[bar] = dict(title=bar, index=-1,
                                           total=None, message=None)
                 old_value = self.bars[bar][attr]
+
+                if self.bar_is_logged(bar):
+                    new_bar = (attr == 'index') and (value < old_value)
+                    if (attr == 'total') or (new_bar):
+                        self.bars[bar]['indent'] = self.log_indent
+                    else:
+                        self.log_indent = self.bars[bar]['indent']
+                    self.log("[%s] %s: %s" % (bar, attr, value))
+                    self.log_indent += self.bar_indent
                 self.bars[bar][attr] = value
                 self.bars_callback(bar, attr, value, old_value)
         self.state.update(kw)
@@ -213,9 +251,11 @@ class TqdmProgressBarLogger(ProgressBarLogger):
     """
 
     def __init__(self, init_state=None, bars=None, leave_bars=False,
-                 ignored_bars=None, notebook='default', print_messages=True):
+                 ignored_bars=None, logged_bars='all', notebook='default',
+                 print_messages=True):
         ProgressBarLogger.__init__(self, init_state=init_state, bars=bars,
-                                   ignored_bars=ignored_bars)
+                                   ignored_bars=ignored_bars,
+                                   logged_bars=logged_bars)
         self.leave_bars = leave_bars
         self.tqdm_bars = OrderedDict([
             (bar, None)
@@ -235,7 +275,7 @@ class TqdmProgressBarLogger(ProgressBarLogger):
         self.tqdm_bars[bar] = self.tqdm(
            total=infos['total'],
            desc=infos['title'],
-           postfix=dict(now=infos['message']),
+           postfix=dict(now=troncate_string(str(infos['message']))),
            leave=self.leave_bars
         )
     def close_tqdm_bar(self, bar):
@@ -253,17 +293,18 @@ class TqdmProgressBarLogger(ProgressBarLogger):
                     self.close_tqdm_bar(bar)
                 else:
                     self.tqdm_bars[bar].update(value - old_value)
-
-
             else:
                 self.new_tqdm_bar(bar)
                 self.tqdm_bars[bar].update(value + 1)
         elif attr == 'message':
-            self.tqdm_bars[bar].set_postfix(now=value)
+            self.tqdm_bars[bar].set_postfix(now=troncate_string(str(value)))
             self.tqdm_bars[bar].update(0)
     def callback(self, **kw):
         if self.print_messages and ('message' in kw) and kw['message']:
-            self.tqdm.write(kw['message'])
+            if self.notebook:
+                print(kw['message'])
+            else:
+                self.tqdm.write(kw['message'])
 
 class RqWorkerProgressLogger:
     def __init__(self, job):
