@@ -21,6 +21,7 @@ class ProgressLogger:
 
     Parameters
     ----------
+
     init_state
       Dictionnary representing the initial state.
     """
@@ -28,6 +29,7 @@ class ProgressLogger:
     def __init__(self, init_state=None):
 
         self.state = {}
+        self.stored = {}
         self.logs = []
         self.log_indent = 0
         if init_state is not None:
@@ -51,6 +53,26 @@ class ProgressLogger:
         """
         pass
 
+    def store(self, **kw):
+        """Store objects in the logger and trigger ``self.store_callback``.
+
+        This works exactly like ``logger()``, but the later is meant for simple
+        data objects (text, numbers) that will be sent over the network or
+        written to a file. The ``store`` method expects rather large objects
+        which are not necessarily serializable, and will be used eg to draw
+        plots on the fly.
+        """
+        self.stored.update(kw)
+        self.store_callback(**kw)
+
+    def store_callback(self, **kw):
+        """Execute something after the store has been updated by the given
+        state elements.
+
+        This default callback does nothing, overwrite it by subclassing
+        """
+        pass
+
     def iter(self, **kw):
         """Iterate through a list while updating the state.
 
@@ -66,6 +88,8 @@ class ProgressLogger:
             for it in iterable:
                 self(**{field: it})
                 yield it
+
+
 
 
     def __call__(self, **kw):
