@@ -3,6 +3,7 @@
 
 from tqdm import tqdm, tqdm_notebook
 from collections import OrderedDict
+import time
 
 SETTINGS = {
     'notebook': False
@@ -122,7 +123,7 @@ class ProgressBarLogger(ProgressLogger):
     bar_indent = 2
 
     def __init__(self, init_state=None, bars=None, ignored_bars=None,
-                 logged_bars='all'):
+                 logged_bars='all', min_time_interval=0):
         ProgressLogger.__init__(self, init_state)
         if bars is None:
             bars = OrderedDict()
@@ -137,6 +138,7 @@ class ProgressBarLogger(ProgressLogger):
         self.ignored_bars = ignored_bars
         self.logged_bars = logged_bars
         self.state['bars'] = bars
+        self.min_time_interval = min_time_interval
 
     @property
     def bars(self):
@@ -164,7 +166,7 @@ class ProgressBarLogger(ProgressLogger):
 
         Examples
         --------
-        >>> for username in logger.iter_bar(user=['tom', 'tim', 'lea']:
+        >>> for username in logger.iter_bar(user=['tom', 'tim', 'lea']):
         >>>     # At every loop, logger.state['bars']['user'] is updated
         >>>     # to {index: i, total: 3, title:'user'}
         >>>     print (username)
@@ -182,13 +184,18 @@ class ProgressBarLogger(ProgressLogger):
             self(**{bar + '__total': len(iterable)})
 
         def new_iterable():
+            last_time = time.time()
             for i, it in enumerate(iterable):
-                if bar_message is not None:
-                    self(**{bar + '__message': bar_message(it)})
-
-                self(**{bar + '__index': i})
+                this_time = time.time()
+                if this_time - last_time > self.min_time_interval:
+                    if bar_message is not None:
+                        self(**{bar + '__message': bar_message(it)})
+                    self(**{bar + '__index': i})
+                    last_time = this_time
                 yield it
 
+            if self.bars[bar]['index'] != i:
+                self(**{bar + '__index': i})
             self(**{bar + '__index': i + 1})
 
         return new_iterable()
@@ -276,10 +283,11 @@ class TqdmProgressBarLogger(ProgressBarLogger):
 
     def __init__(self, init_state=None, bars=None, leave_bars=False,
                  ignored_bars=None, logged_bars='all', notebook='default',
-                 print_messages=True):
+                 print_messages=True, min_time_interval=0):
         ProgressBarLogger.__init__(self, init_state=init_state, bars=bars,
                                    ignored_bars=ignored_bars,
-                                   logged_bars=logged_bars)
+                                   logged_bars=logged_bars,
+                                   min_time_interval=min_time_interval)
         self.leave_bars = leave_bars
         self.tqdm_bars = OrderedDict([
             (bar, None)
@@ -305,7 +313,8 @@ class TqdmProgressBarLogger(ProgressBarLogger):
     def close_tqdm_bar(self, bar):
         """Close and erase the tqdm bar"""
         self.tqdm_bars[bar].close()
-        self.tqdm_bars[bar] = None
+        if not self.notebook:
+            self.tqdm_bars[bar] = None
 
     def bars_callback(self, bar, attr, value, old_value):
         if (bar not in self.tqdm_bars) or (self.tqdm_bars[bar] is None):
