@@ -161,7 +161,7 @@ class ProgressBarLogger(ProgressLogger):
         else:
             return bar in self.logged_bars
 
-    def iter_bar(self, **kw):
+    def iter_bar(self, bar_prefix='', **kw):
         """Iterate through a list while updating a state bar.
 
         Examples
@@ -180,6 +180,7 @@ class ProgressBarLogger(ProgressLogger):
 
         if self.bar_is_ignored(bar):
             return iterable
+        bar = bar_prefix + bar
         if hasattr(iterable, '__len__'):
             self(**{bar + '__total': len(iterable)})
 
