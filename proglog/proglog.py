@@ -187,12 +187,12 @@ class ProgressBarLogger(ProgressLogger):
         def new_iterable():
             last_time = time.time()
             for i, it in enumerate(iterable):
-                this_time = time.time()
-                if this_time - last_time > self.min_time_interval:
+                now_time = time.time()
+                if (i == 0) or (now_time - last_time > self.min_time_interval):
                     if bar_message is not None:
                         self(**{bar + '__message': bar_message(it)})
                     self(**{bar + '__index': i})
-                    last_time = this_time
+                    last_time = now_time
                 yield it
 
             if self.bars[bar]['index'] != i:
@@ -333,6 +333,7 @@ class TqdmProgressBarLogger(ProgressBarLogger):
         elif attr == 'message':
             self.tqdm_bars[bar].set_postfix(now=troncate_string(str(value)))
             self.tqdm_bars[bar].update(0)
+
     def callback(self, **kw):
         if self.print_messages and ('message' in kw) and kw['message']:
             if self.notebook:
@@ -353,7 +354,15 @@ class RqWorkerProgressLogger:
 
 class RqWorkerBarLogger(RqWorkerProgressLogger, ProgressBarLogger):
 
-    def __init__(self, job, init_state=None, bars=None, ignored_bars=()):
+    def __init__(self, job, init_state=None, bars=None, ignored_bars=(),
+                 logged_bars='all',  min_time_interval=0):
         RqWorkerProgressLogger.__init__(self, job)
         ProgressBarLogger.__init__(self, init_state=init_state, bars=bars,
-                                   ignored_bars=ignored_bars)
+                                   ignored_bars=ignored_bars,
+                                   logged_bars=logged_bars,
+                                   min_time_interval=min_time_interval)
+
+class MuteProgressBarLogger(ProgressBarLogger):
+
+    def bar_is_ignored(self, bar):
+        return True
