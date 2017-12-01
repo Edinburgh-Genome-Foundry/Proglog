@@ -13,8 +13,10 @@ For instance, you will need to write different code depending on whether you are
 
 Sometimes you need to channel the progress logs of different components into a same logger, at which case you may also let the final user choose which progress bars they want to display or to mute, even when these are handled deep down in your programs.
 
+
 .. image:: https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/run_and_get_progress.png
     :align: center
+
 
 You may also want to log more than just progress bars, have specific callback fonctions, print the logs in human-readable format... Proglog provides all these features.
 
@@ -44,8 +46,10 @@ Now when the library users run a program in the console, they will get a console
     from my_library import my_routine
     my_routine()
 
+
 .. image:: https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/console_bar.png
     :align: center
+
 
 If the users run the routine inside a Jupyter/IPython notebook, they only need to write ``proglog.notebook()`` at the beginning of the notebook to obtain HTML progress bars:
 
@@ -57,8 +61,10 @@ If the users run the routine inside a Jupyter/IPython notebook, they only need t
     from my_library import my_routine
     my_routine()
 
+
 .. image:: https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/notebook_bar.png
     :align: center
+
 
 If the user wishes to turn off all progress bars:
 
@@ -72,6 +78,7 @@ If the user is running the routine on a web server and would want to attach the
 data to an asynchronous Python-RQ job, all they need is yet a different logger:
 
 .. code:: python
+
     from proglog import RqWorkerBarLogger
     from my_library import my_routine
 
@@ -80,8 +87,10 @@ data to an asynchronous Python-RQ job, all they need is yet a different logger:
 
 This allows to then display progress bars on the website such as these (see the `EGF CUBA <https://github.com/Edinburgh-Genome-Foundry/CUBA>`_ project for an example of website using Proglog):
 
+
 .. image:: https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/website_bar.png
     :align: center
+
 
 The user may also want a custom progress logger which selectively ignores the ``animals`` progress bar, and only updates its bars every second (to save computing time):
 
@@ -97,6 +106,7 @@ The user may also want a custom progress logger which selectively ignores the ``
 Proglog loggers can be used for much more than just progress bars. They can in fact store any kind of data with a simple API:
 
 .. code:: python
+
     logger(message='Now running the main program, be patient...')
     logger(current_animal='cat')
     logger(last_number_tried=1235)
@@ -122,8 +132,10 @@ For more complex customization, such as adding callback functions which will be 
 
 When writing libraries which all log progress and may depend on each other, simply pass the Proglog logger from one program to its dependencies, to obtain one logger keeping track of all progress across libraries at once: (this implies that not two librairies use the same variables or loop names, which can be avoided by attributing prefixes to these names):
 
+
 .. image:: https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/loggers_schema.png
     :align: center
+
 
 Installation
 -------------
