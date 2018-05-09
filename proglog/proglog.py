@@ -123,7 +123,7 @@ class ProgressBarLogger(ProgressLogger):
     bar_indent = 2
 
     def __init__(self, init_state=None, bars=None, ignored_bars=None,
-                 logged_bars='all', min_time_interval=0):
+                 logged_bars='all', min_time_interval=0, ignore_bars_under=0):
         ProgressLogger.__init__(self, init_state)
         if bars is None:
             bars = OrderedDict()
@@ -139,6 +139,7 @@ class ProgressBarLogger(ProgressLogger):
         self.logged_bars = logged_bars
         self.state['bars'] = bars
         self.min_time_interval = min_time_interval
+        self.ignore_bars_under = ignore_bars_under
 
     @property
     def bars(self):
@@ -161,6 +162,10 @@ class ProgressBarLogger(ProgressLogger):
         else:
             return bar in self.logged_bars
 
+    def iterable_is_too_short(self, iterable):
+        length = len(iterable) if hasattr(iterable, '__len__') else None
+        return (length is not None) and (length < self.ignore_bars_under)
+
     def iter_bar(self, bar_prefix='', **kw):
         """Iterate through a list while updating a state bar.
 
@@ -178,7 +183,7 @@ class ProgressBarLogger(ProgressLogger):
             bar_message = None
         bar, iterable = kw.popitem()
 
-        if self.bar_is_ignored(bar):
+        if self.bar_is_ignored(bar) or self.iterable_is_too_short(iterable):
             return iterable
         bar = bar_prefix + bar
         if hasattr(iterable, '__len__'):
@@ -186,6 +191,7 @@ class ProgressBarLogger(ProgressLogger):
 
         def new_iterable():
             last_time = time.time()
+            i = 0 # necessary in case the iterator is empty
             for i, it in enumerate(iterable):
                 now_time = time.time()
                 if (i == 0) or (now_time - last_time > self.min_time_interval):
