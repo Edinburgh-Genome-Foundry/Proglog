@@ -1,8 +1,9 @@
-Proglog
-=========
+.. raw:: html
 
-.. image:: https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/logo.png
-    :align: center
+    <p align="center">
+    <img alt="Proglog Logo" title="Proglog Logo" src="https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/logo.png" width="500">
+    <br /><br />
+    </p>
 
 Proglog is a progress logging system for Python. It allows to build complex
 libraries while giving the user control on the management of logs, callbacks and progress bars.
@@ -13,9 +14,11 @@ For instance, you will need to write different code depending on whether you are
 
 Sometimes you need to channel the progress logs of different components into a same logger, at which case you may also let the final user choose which progress bars they want to display or to mute, even when these are handled deep down in your programs.
 
+.. raw:: html
 
-.. image:: https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/run_and_get_progress.png
-    :align: center
+    <p align="center">
+    <img src="https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/run_and_get_progress.png"    width="650">
+    </p>
 
 
 You may also want to log more than just progress bars, have specific callback fonctions, print the logs in human-readable format... Proglog provides all these features.
@@ -46,10 +49,11 @@ Now when the library users run a program in the console, they will get a console
     from my_library import my_routine
     my_routine()
 
+.. raw:: html
 
-.. image:: https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/console_bar.png
-    :align: center
-
+    <p align="center">
+    <img src="https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/console_bar.png"    width="450">
+    </p>
 
 If the users run the routine inside a Jupyter/IPython notebook, they only need to write ``proglog.notebook()`` at the beginning of the notebook to obtain HTML progress bars:
 
@@ -61,9 +65,11 @@ If the users run the routine inside a Jupyter/IPython notebook, they only need t
     from my_library import my_routine
     my_routine()
 
+.. raw:: html
 
-.. image:: https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/notebook_bar.png
-    :align: center
+    <p align="center">
+    <img src="https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/notebook_bar.png"    width="450">
+    </p>
 
 
 If the user wishes to turn off all progress bars:
@@ -87,9 +93,11 @@ data to an asynchronous Python-RQ job, all they need is yet a different logger:
 
 This allows to then display progress bars on the website such as these (see the `EGF CUBA <https://github.com/Edinburgh-Genome-Foundry/CUBA>`_ project for an example of website using Proglog):
 
+.. raw:: html
 
-.. image:: https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/website_bar.png
-    :align: center
+    <p align="center">
+    <img src="https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/website_bar.png"    width="450">
+    </p>
 
 
 The user may also want a custom progress logger which selectively ignores the ``animals`` progress bar, and only updates its bars every second (to save computing time):
@@ -132,9 +140,11 @@ For more complex customization, such as adding callback functions which will be 
 
 When writing libraries which all log progress and may depend on each other, simply pass the Proglog logger from one program to its dependencies, to obtain one logger keeping track of all progress across libraries at once: (this implies that not two librairies use the same variables or loop names, which can be avoided by attributing prefixes to these names):
 
+.. raw:: html
 
-.. image:: https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/loggers_schema.png
-    :align: center
+    <p align="center">
+    <img src="https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/loggers_schema.png"    width="650">
+    </p>
 
 
 Installation
