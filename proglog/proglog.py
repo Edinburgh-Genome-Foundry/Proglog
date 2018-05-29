@@ -290,10 +290,12 @@ class TqdmProgressBarLogger(ProgressBarLogger):
 
     def __init__(self, init_state=None, bars=None, leave_bars=False,
                  ignored_bars=None, logged_bars='all', notebook='default',
-                 print_messages=True, min_time_interval=0):
+                 print_messages=True, min_time_interval=0,
+                 ignore_bars_under=0):
         ProgressBarLogger.__init__(self, init_state=init_state, bars=bars,
                                    ignored_bars=ignored_bars,
                                    logged_bars=logged_bars,
+                                   ignore_bars_under=ignore_bars_under,
                                    min_time_interval=min_time_interval)
         self.leave_bars = leave_bars
         self.tqdm_bars = OrderedDict([
@@ -372,3 +374,18 @@ class MuteProgressBarLogger(ProgressBarLogger):
 
     def bar_is_ignored(self, bar):
         return True
+
+def default_bar_logger(logger, bars=None, ignored_bars=None, logged_bars='all',
+                       min_time_interval=0, ignore_bars_under=0):
+    if logger == 'bar':
+        return TqdmProgressBarLogger(
+            bars=bars,
+            ignored_bars=ignored_bars,
+            logged_bars=logged_bars,
+            min_time_interval=min_time_interval,
+            ignore_bars_under=ignore_bars_under
+        )
+    elif logger is None:
+        return MuteProgressBarLogger()
+    else:
+        return logger

@@ -4,6 +4,6 @@
 
 from .proglog import (ProgressLogger, ProgressBarLogger, TqdmProgressBarLogger,
                       notebook, RqWorkerProgressLogger, RqWorkerBarLogger,
-                      MuteProgressBarLogger)
+                      MuteProgressBarLogger, default_bar_logger)
 
 from .version import __version__
