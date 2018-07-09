@@ -141,6 +141,7 @@ For more complex customization, such as adding callback functions which will be 
     my_routine(logger=logger)
 
 When writing libraries which all log progress and may depend on each other, simply pass the Proglog logger from one program to its dependencies, to obtain one logger keeping track of all progress across libraries at once:
+
 .. raw:: html
 
     <p align="center">
