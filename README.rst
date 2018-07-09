@@ -8,11 +8,15 @@
 Proglog is a progress logging system for Python. It allows to build complex
 libraries while giving the user control on the management of logs, callbacks and progress bars.
 
-**What problems does it solve ?** Libraries like `tqdm <https://github.com/noamraph/tqdm>`_ or `progress <https://github.com/verigak/progress/>`_ are great for quickly adding progress bars to your scripts, but become difficult to manage when building larger projects.
+**What problems does it solve ?**
 
-For instance, you will need to write different code depending on whether you are displaying the progress in a console, a Jupyter notebook, or a website.
+Libraries like `tqdm <https://github.com/noamraph/tqdm>`_ or `progress <https://github.com/verigak/progress/>`_ are great for quickly adding progress bars to your scripts, but become difficult to manage when building larger projects.
 
-Sometimes you need to channel the progress logs of different components into a same logger, at which case you may also let the final user choose which progress bars they want to display or to mute, even when these are handled deep down in your programs.
+For instance, you will need to write different code depending on whether you are displaying the progress in a console, a Jupyter notebook, or a webpage.
+
+Sometimes you also need to channel the progress logs of different components into a same logger, at which case you may also let the final user choose which progress bars they want to display or to mute, even when these are handled deep down in your programs.
+
+For instance if your routine 1 calls a routine 2 and routine 3 (possibly from other libraries) you may want to be able to silence the progress bars of routine 2, or to only show the progress bars of routine 1. As long as all routines use Proglog, this will be easy to do.
 
 .. raw:: html
 
@@ -32,12 +36,11 @@ Assume that you are writing a library called ``my_library`` in which you define 
 .. code:: python
 
     import time # for simulating computing time
-    from proglog import TqdmProgressBarLogger
+    from proglog import default_bar_logger
 
     def my_routine(iterations=10, logger='bars'):
         """Run several loops to showcase Proglog."""
-        if logger == 'bars':
-            logger = TqdmProgressBarLogger()
+        logger = default_bar_logger(logger) # shorthand to generate a bar logger
         for i in logger.iter_bar(iteration=range(iterations)):
             for j in logger.iter_bar(animal=['dog', 'cat', 'rat', 'duck']):
                 time.sleep(0.1) # Simulate some computing time
@@ -77,8 +80,7 @@ If the user wishes to turn off all progress bars:
 .. code:: python
 
     from my_library import my_routine
-    from proglog import MuteProgressBarLogger
-    my_routine(logger=MuteProgressBarLogger())
+    my_routine(logger=None)
 
 If the user is running the routine on a web server and would want to attach the
 data to an asynchronous Python-RQ job, all they need is yet a different logger:
@@ -138,13 +140,18 @@ For more complex customization, such as adding callback functions which will be 
     logger = MyBarLogger()
     my_routine(logger=logger)
 
-When writing libraries which all log progress and may depend on each other, simply pass the Proglog logger from one program to its dependencies, to obtain one logger keeping track of all progress across libraries at once: (this implies that not two librairies use the same variables or loop names, which can be avoided by attributing prefixes to these names):
-
+When writing libraries which all log progress and may depend on each other, simply pass the Proglog logger from one program to its dependencies, to obtain one logger keeping track of all progress across libraries at once:
 .. raw:: html
 
     <p align="center">
     <img src="https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/loggers_schema.png"    width="650">
     </p>
+
+Note that this implies that not two librairies use the same variables or loop names, which can be avoided by attributing prefixes to these names:
+
+.. code:: python
+    for i in logger.iter_bar(iteration=range(iterations), bar_prefix='libraryname_'):
+        ...
 
 
 Installation
