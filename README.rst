@@ -6,7 +6,7 @@
     </p>
 
 Proglog is a progress logging system for Python. It allows to build complex
-libraries while giving the user control on the management of logs, callbacks and progress bars.
+libraries while giving library users control over logs, callbacks and progress bars.
 
 **What problems does it solve ?**
 
@@ -14,9 +14,9 @@ Libraries like `tqdm <https://github.com/noamraph/tqdm>`_ or `progress <https://
 
 For instance, you will need to write different code depending on whether you are displaying the progress in a console, a Jupyter notebook, or a webpage.
 
-Sometimes you also need to channel the progress logs of different components into a same logger, at which case you may also let the final user choose which progress bars they want to display or to mute, even when these are handled deep down in your programs.
+Sometimes a single program may have to handle many logs and progress bars coming from different subprograms and libraries, at which case you may want to let the final user decide which progress bars they want to display or to mute, even when these progress bars are handled deep down in your program.
 
-For instance if your routine 1 calls a routine 2 and routine 3 (possibly from other libraries) you may want to be able to silence the progress bars of routine 2, or to only show the progress bars of routine 1. As long as all routines use Proglog, this will be easy to do.
+For instance if your program 1 calls a program 2 and program 3 (possibly from other libraries), you may want to be able to silence the progress bars of routine 2, or to only show the progress bars of routine 1. As long as all routines use Proglog, this will be easy to do.
 
 .. raw:: html
 
