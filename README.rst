@@ -6,7 +6,7 @@
     </p>
 
 Proglog is a progress logging system for Python. It allows to build complex
-libraries while giving library users control over logs, callbacks and progress bars.
+libraries while giving your  users control over logs, callbacks and progress bars.
 
 **What problems does it solve ?**
 
