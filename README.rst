@@ -183,7 +183,7 @@ Contribute !
 -------------
 
 Proglog is an open-source software originally written at the `Edinburgh Genome Foundry
-<http://www.genomefoundry.io>`_ by `Zulko <https://github.com/Zulko>`_
+<https://www.ed.ac.uk/biology/research/facilities/edinburgh-genome-foundry>`_ by `Zulko <https://github.com/Zulko>`_
 and `released on Github <https://github.com/Edinburgh-Genome-Foundry/DnaCauldron>`_ under
 the MIT licence (copyright Edinburgh Genome Foundry).
 
