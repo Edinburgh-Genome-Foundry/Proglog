@@ -38,7 +38,7 @@ Assume that you are writing a library called ``my_library`` in which you define 
     import time # for simulating computing time
     from proglog import default_bar_logger
 
-    def my_routine(iterations=10, logger='bars'):
+    def my_routine(iterations=10, logger='bar'):
         """Run several loops to showcase Proglog."""
         logger = default_bar_logger(logger) # shorthand to generate a bar logger
         for i in logger.iter_bar(iteration=range(iterations)):
