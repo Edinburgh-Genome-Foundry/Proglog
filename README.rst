@@ -29,21 +29,21 @@ You may also want to log more than just progress bars, have specific callback fo
 
 
 Usage
--------
+-----
 
 Assume that you are writing a library called ``my_library`` in which you define a routine as follows:
 
 .. code:: python
 
-    import time # for simulating computing time
+    import time  # for simulating computing time
     from proglog import default_bar_logger
 
     def my_routine(iterations=10, logger='bar'):
         """Run several loops to showcase Proglog."""
-        logger = default_bar_logger(logger) # shorthand to generate a bar logger
+        logger = default_bar_logger(logger)  # shorthand to generate a bar logger
         for i in logger.iter_bar(iteration=range(iterations)):
             for j in logger.iter_bar(animal=['dog', 'cat', 'rat', 'duck']):
-                time.sleep(0.1) # Simulate some computing time
+                time.sleep(0.1)  # simulate some computing time
 
 Now when the library users run a program in the console, they will get a console progress bar:
 
@@ -148,43 +148,49 @@ When writing libraries which all log progress and may depend on each other, simp
     <img src="https://raw.githubusercontent.com/Edinburgh-Genome-Foundry/Proglog/master/docs/loggers_schema.png"    width="650">
     </p>
 
-Note that this implies that not two librairies use the same variables or loop names, which can be avoided by attributing prefixes to these names:
+Note that this implies that not two libraries use the same variables or loop names, which can be avoided by attributing prefixes to these names:
 
 .. code:: python
+
     for i in logger.iter_bar(iteration=range(iterations), bar_prefix='libraryname_'):
         ...
 
 
 Installation
--------------
+------------
 
-You can install Proglog through PIP
-
-.. code:: shell
-
-    sudo pip install proglog
-
-Alternatively, you can unzip the sources in a folder and type
+You can install Proglog through PIP:
 
 .. code:: shell
 
-    sudo python setup.py install
+    pip install proglog
 
-To use the ``tqdm`` notebook-style progress bars you need to install and enable
-iwidgets:
+Alternatively, you can unzip the sources in a folder and type:
 
 .. code:: shell
 
-    sudo pip install ipywidgets
-    sudo jupyter nbextension enable --py --sys-prefix widgetsnbextension
+    python setup.py install
+
+To use the ``tqdm`` notebook-style progress bars you need to install iwidgets:
+
+.. code:: shell
+
+    pip install ipywidgets
+
+This `should automatically enable it <https://ipywidgets.readthedocs.io/en/latest/user_install.html>`_; for older versions try:
+
+.. code:: shell
+
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
 
-Contribute !
+License = MIT
 -------------
 
 Proglog is an open-source software originally written at the `Edinburgh Genome Foundry
 <https://www.ed.ac.uk/biology/research/facilities/edinburgh-genome-foundry>`_ by `Zulko <https://github.com/Zulko>`_
 and `released on Github <https://github.com/Edinburgh-Genome-Foundry/DnaCauldron>`_ under
-the MIT licence (copyright Edinburgh Genome Foundry).
+the MIT license (Copyright 2017 Edinburgh Genome Foundry).
 
-Proglog was not written by loggology experts, it *just works* with our projects and we use it a lot. Everyone is welcome to contribute if you find bugs or limitations !
+Proglog was not written by loggology experts, it *just works* with our projects and we use it a lot.
+Everyone is welcome to contribute if you find bugs or limitations !
