@@ -1,7 +1,6 @@
 import time  # for simulating computing time
 from proglog import default_bar_logger
 from proglog import TqdmProgressBarLogger
-from proglog import ProgressBarLogger
 
 
 def my_routine(iterations=10, logger="bar"):

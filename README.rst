@@ -5,6 +5,13 @@
     <br /><br />
     </p>
 
+.. image:: https://github.com/Edinburgh-Genome-Foundry/Proglog/actions/workflows/build.yml/badge.svg
+    :target: https://github.com/Edinburgh-Genome-Foundry/Proglog/actions/workflows/build.yml
+    :alt: GitHub CI build status
+
+.. image:: https://coveralls.io/repos/github/Edinburgh-Genome-Foundry/Proglog/badge.svg?branch=master
+    :target: https://coveralls.io/github/Edinburgh-Genome-Foundry/Proglog?branch=master
+
 Proglog is a progress logging system for Python. It allows to build complex
 libraries while giving your  users control over logs, callbacks and progress bars.
 
