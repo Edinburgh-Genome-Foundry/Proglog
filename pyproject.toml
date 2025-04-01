@@ -1,7 +1,7 @@
 [project]
 name = "proglog"
 version = "0.1.11"
-license = "MIT"
+license = { file = "LICENSE" }
 authors = [{ name = "Zulko" }]
 description = "Log and progress bar manager for console, notebooks, web..."
 readme = "pypi-readme.rst"
