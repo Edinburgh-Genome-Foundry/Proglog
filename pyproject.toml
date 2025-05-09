@@ -1,6 +1,6 @@
 [project]
 name = "proglog"
-version = "0.1.11"
+version = "0.1.12"
 license = "MIT"
 authors = [{ name = "Zulko" }]
 description = "Log and progress bar manager for console, notebooks, web..."
